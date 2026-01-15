@@ -1,32 +1,4 @@
 // scripts.js (ES module)
-// 사용법: 아래 `sites` 배열에 항목을 추가하세요.
-// 각 항목: { id, title, url, description, thumbnail }
-// - thumbnail은 선택 사항(절대 경로 권장). 없으면 사이트 도메인으로 된 기본 박스가 뜹니다.
-// - id는 유일해야 함.
-
-const sites = [
-  {
-    id: "1",
-    title: "6단지",
-    url: "pages/1.html",
-    description: "비단잉어 국숫집",
-    thumbnail: "assets/images/1_After.png"
-  },
-  {
-    id: "2",
-    title: "6단지",
-    url: "pages/2.html",
-    description: "아우 가판대",
-    thumbnail: "assets/images/2_After.png"
-  },
-  // 여기에 원하는 만큼 항목 추가
-];
-
-// ----- 아래는 템플릿 동작 코드 (수정 불필요) -----
-
-const siteListEl = document.getElementById("siteList");
-const embedFrame = document.getElementById("embedFrame");
-const embedTitle = document.getElementById("embedTitle");
 
 // 유틸: 상대/절대 URL을 현재 문서(location.href)를 기준으로 절대 URL로 변환
 // scripts.js (ES module)
