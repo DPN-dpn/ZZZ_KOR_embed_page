@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Before / After Viewer</title>
+  <style>
+    html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background:#111;color:#fff}
+    .wrap{display:flex;flex-direction:column;height:100%}
+    .top{padding:10px;background:#0d0d0d;border-bottom:1px solid #222}
+    .panes{flex:1;display:flex;gap:8px;padding:8px;box-sizing:border-box}
+    .pane{flex:1;background:#000;display:flex;align-items:center;justify-content:center;overflow:auto}
+    .pane img{max-width:100%;max-height:100%;display:block}
+    .labels{display:flex;gap:8px;padding:8px}
+    .label{background:#222;padding:6px 10px;border-radius:4px}
+    .notice{padding:16px;text-align:center;color:#ccc}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <strong id="title">Before / After Viewer</strong>
+    </div>
+    <div class="labels">
+      <div class="label">Left: <span id="leftLabel">before</span></div>
+      <div class="label">Right: <span id="rightLabel">after</span></div>
+    </div>
+    <div id="content" class="panes">
+      <div id="left" class="pane"></div>
+      <div id="right" class="pane"></div>
+    </div>
+    <div id="notice" class="notice" style="display:none"></div>
+  </div>
+
+  <script>
+    function safeParam(name){try{return new URLSearchParams(location.search).get(name)}catch(e){return null}}
+    const before = safeParam('before');
+    const after = safeParam('after');
+    const left = document.getElementById('left');
+    const right = document.getElementById('right');
+    const notice = document.getElementById('notice');
+    const leftLabel = document.getElementById('leftLabel');
+    const rightLabel = document.getElementById('rightLabel');
+
+    if(!before && !after){
+      notice.style.display = 'block';
+      notice.textContent = '이미지 경로가 제공되지 않았습니다. 메인 페이지에서 before/after 파라미터를 전달하세요.';
+    } else {
+      if(before){
+        leftLabel.textContent = 'before';
+        const img = document.createElement('img'); img.src = before; img.alt = 'before'; left.appendChild(img);
+      }
+      if(after){
+        rightLabel.textContent = 'after';
+        const img = document.createElement('img'); img.src = after; img.alt = 'after'; right.appendChild(img);
+      }
+    }
+  </script>
+</body>
+</html>

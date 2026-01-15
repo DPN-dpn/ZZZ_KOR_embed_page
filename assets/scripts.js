@@ -8,16 +8,18 @@ const sites = [
   {
     id: "1",
     title: "6단지",
-    url: "pages/1.html",
     description: "비단잉어 국숫집",
-    thumbnail: "assets/images/1_After.png"
+    thumbnail: "assets/images/1_After.png",
+    before: "assets/images/1_Before.png",
+    after: "assets/images/1_After.png"
   },
   {
     id: "2",
     title: "6단지",
-    url: "pages/2.html",
     description: "아우 가판대",
-    thumbnail: "assets/images/2_After.png"
+    thumbnail: "assets/images/2_After.png",
+    before: "assets/images/2_Before.png",
+    after: "assets/images/2_After.png"
   },
   // 여기에 원하는 만큼 항목 추가
 ];
@@ -64,16 +66,8 @@ function renderCards() {
       img.style.objectFit = "cover";
       thumb.appendChild(img);
     } else {
-      // 기본 자리표시: 사이트의 "도메인 + 경로"를 보여줌
-      const resolved = resolveUrl(site.url);
-      let displayLine = "";
-      if (resolved) {
-        // 예: username.github.io/repo/pages/1.html -> host + pathname
-        displayLine = `${resolved.host}${resolved.pathname}`;
-      } else {
-        // 파싱 실패 시 원본 문자열 표시
-        displayLine = site.url;
-      }
+      // 기본 자리표시: 사이트 제목 또는 설명을 사용
+      let displayLine = site.title || site.description || "";
       thumb.innerHTML = `<div style="text-align:center;padding:12px">
         <strong style="display:block;margin-bottom:6px">${site.title}</strong>
         <span style="color:rgba(255,255,255,0.6);font-size:0.9rem">${displayLine}</span>
@@ -99,9 +93,9 @@ function renderCards() {
     const newTab = document.createElement("a");
     newTab.className = "button secondary";
     newTab.textContent = "새 탭";
-    // href에 절대 URL을 넣어 안전하게 새탭에서 열리게 함
-    const resolvedForLink = resolveUrl(site.url);
-    newTab.href = resolvedForLink ? resolvedForLink.href : site.url;
+    // 공통 뷰어 페이지를 새 탭에서 열도록 설정
+    const resolvedForLink = resolveUrl('pages/viewer.html');
+    newTab.href = resolvedForLink ? resolvedForLink.href : 'pages/viewer.html';
     newTab.target = "_blank";
     newTab.rel = "noopener";
 
@@ -124,9 +118,21 @@ function openModal(site) {
   modal.setAttribute("aria-hidden", "false");
   modalTitle.textContent = site.title;
 
-  // 절대 URL로 변환
-  const resolved = resolveUrl(site.url);
-  const targetHref = resolved ? resolved.href : site.url;
+  // 공통 뷰어 페이지로 이동하고 before/after 파라미터를 추가
+  const resolved = resolveUrl('pages/viewer.html');
+  let targetHref = resolved ? resolved.href : 'pages/viewer.html';
+  // before/after가 있으면 절대 URL로 변환해 쿼리로 전달
+  const params = new URLSearchParams();
+  if (site.before) {
+    const r = resolveUrl(site.before);
+    params.set('before', r ? r.href : site.before);
+  }
+  if (site.after) {
+    const r = resolveUrl(site.after);
+    params.set('after', r ? r.href : site.after);
+  }
+  const qs = params.toString();
+  if (qs) targetHref = targetHref + (targetHref.includes('?') ? '&' : '?') + qs;
   openNewTab.href = targetHref;
   embedStatus.textContent = "로딩 중…";
 
