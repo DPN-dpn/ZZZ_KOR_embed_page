@@ -51,11 +51,23 @@ function start() {
       li.className = "site-item";
       li.setAttribute("data-id", site.id);
 
+      // 카드 전체를 클릭할 수 있게 li에 클릭 리스너 추가
+      li.addEventListener('click', () => selectSite(site, li));
+
+      // 배경에 썸네일 적용 (덮어쓰기 대신 그라데이션+이미지)
+      if (site.thumbnail) {
+        li.style.background = `linear-gradient(180deg, rgba(11,18,32,0.6), rgba(255,255,255,0.02)), url('${site.thumbnail}')`;
+        li.style.backgroundSize = 'cover';
+        li.style.backgroundPosition = 'center';
+        li.style.backgroundRepeat = 'no-repeat';
+      }
+
       const btn = document.createElement("button");
       btn.className = "site-btn";
       btn.type = "button";
       btn.textContent = site.title || site.url;
-      btn.addEventListener("click", () => selectSite(site, li));
+      // 버튼 클릭 시 이벤트 버블링을 막아 중복 호출 방지
+      btn.addEventListener("click", (e) => { e.stopPropagation(); selectSite(site, li); });
 
       const small = document.createElement("div");
       small.className = "site-meta";
