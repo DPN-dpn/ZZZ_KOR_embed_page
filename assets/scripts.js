@@ -8,9 +8,9 @@ const sites = [
   {
     id: "sample-1",
     title: "프로젝트 A",
-    url: "https://username.github.io/project-a/",
+    url: "pages/1.html",
     description: "프로젝트 A의 데모 페이지",
-    thumbnail: "" // 예: "assets/thumbs/project-a.png"
+    thumbnail: "assets/images/1_After.png" // 예: "assets/thumbs/project-a.png"
   },
   {
     id: "sample-2",
