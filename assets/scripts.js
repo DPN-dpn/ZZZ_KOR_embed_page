@@ -24,158 +24,113 @@ const sites = [
 
 // ----- 아래는 템플릿 동작 코드 (수정 불필요) -----
 
-const gallery = document.getElementById("gallery");
-const modal = document.getElementById("modal");
-const closeModalBtn = document.getElementById("closeModal");
-const iframeWrap = document.getElementById("iframeWrap");
-const modalTitle = document.getElementById("modal-title");
+const siteListEl = document.getElementById("siteList");
+const embedFrame = document.getElementById("embedFrame");
+const embedTitle = document.getElementById("embedTitle");
+
+// 유틸: 상대/절대 URL을 현재 문서(location.href)를 기준으로 절대 URL로 변환
+// scripts.js (ES module)
+// sites 배열을 편집하면 사이드바 항목들이 자동으로 업데이트됩니다.
+const sites = [
+  {
+    id: "1",
+    title: "6단지",
+    url: "pages/1.html",
+    description: "비단잉어 국숫집",
+    thumbnail: "assets/images/1_After.png"
+  },
+  {
+    id: "2",
+    title: "6단지",
+    url: "pages/2.html",
+    description: "아우 가판대",
+    thumbnail: "assets/images/2_After.png"
+  }
+];
+
+const sidebar = document.getElementById("sidebar");
+const embedIframe = document.getElementById("embedIframe");
+const embedTitle = document.getElementById("embedTitle");
+const embedDesc = document.getElementById("embedDesc");
 const openNewTab = document.getElementById("openNewTab");
 const embedStatus = document.getElementById("embedStatus");
 
-// 유틸: 상대/절대 URL을 현재 문서(location.href)를 기준으로 절대 URL로 변환
 function resolveUrl(maybeRelative) {
   try {
-    // new URL(value, base) 사용하면 상대경로도 처리 가능
     return new URL(maybeRelative, location.href);
   } catch (e) {
     return null;
   }
 }
 
-// 카드 렌더링
-function renderCards() {
-  gallery.innerHTML = "";
-  sites.forEach(site => {
-    const card = document.createElement("article");
-    card.className = "card";
-    card.setAttribute("data-id", site.id);
+function renderSidebar() {
+  sidebar.innerHTML = "";
+  const list = document.createElement("ul");
+  list.className = "site-list";
 
-    const thumb = document.createElement("div");
-    thumb.className = "card-thumb";
+  sites.forEach((site, idx) => {
+    const li = document.createElement("li");
+    li.className = "site-item";
+    li.setAttribute("data-id", site.id);
 
-    // thumbnail이 있으면 절대 URL로 변환해서 사용
-    if (site.thumbnail) {
-      const resolvedThumb = resolveUrl(site.thumbnail);
-      const img = document.createElement("img");
-      img.src = resolvedThumb ? resolvedThumb.href : site.thumbnail;
-      img.alt = site.title + " 썸네일";
-      img.style.width = "100%";
-      img.style.height = "100%";
-      img.style.objectFit = "cover";
-      thumb.appendChild(img);
-    } else {
-      // 기본 자리표시: 사이트의 "도메인 + 경로"를 보여줌
-      const resolved = resolveUrl(site.url);
-      let displayLine = "";
-      if (resolved) {
-        // 예: username.github.io/repo/pages/1.html -> host + pathname
-        displayLine = `${resolved.host}${resolved.pathname}`;
-      } else {
-        // 파싱 실패 시 원본 문자열 표시
-        displayLine = site.url;
-      }
-      thumb.innerHTML = `<div style="text-align:center;padding:12px">
-        <strong style="display:block;margin-bottom:6px">${site.title}</strong>
-        <span style="color:rgba(255,255,255,0.6);font-size:0.9rem">${displayLine}</span>
-      </div>`;
-    }
+    const btn = document.createElement("button");
+    btn.className = "site-btn";
+    btn.type = "button";
+    btn.textContent = site.title || site.url;
+    btn.addEventListener("click", () => selectSite(site, li));
 
-    const body = document.createElement("div");
-    body.className = "card-body";
-    const title = document.createElement("h3");
-    title.className = "card-title";
-    title.textContent = site.title;
-    const desc = document.createElement("p");
-    desc.className = "card-desc";
-    desc.textContent = site.description || "";
-    const actions = document.createElement("div");
-    actions.className = "card-actions";
+    const small = document.createElement("div");
+    small.className = "site-meta";
+    small.textContent = site.description || "";
 
-    const openBtn = document.createElement("button");
-    openBtn.className = "button";
-    openBtn.textContent = "열기";
-    openBtn.addEventListener("click", () => openModal(site));
-
-    const newTab = document.createElement("a");
-    newTab.className = "button secondary";
-    newTab.textContent = "새 탭";
-    // href에 절대 URL을 넣어 안전하게 새탭에서 열리게 함
-    const resolvedForLink = resolveUrl(site.url);
-    newTab.href = resolvedForLink ? resolvedForLink.href : site.url;
-    newTab.target = "_blank";
-    newTab.rel = "noopener";
-
-    actions.appendChild(openBtn);
-    actions.appendChild(newTab);
-
-    body.appendChild(title);
-    body.appendChild(desc);
-    body.appendChild(actions);
-
-    card.appendChild(thumb);
-    card.appendChild(body);
-
-    gallery.appendChild(card);
+    li.appendChild(btn);
+    li.appendChild(small);
+    list.appendChild(li);
   });
+
+  sidebar.appendChild(list);
 }
 
-// 모달 열기: iframe을 동적으로 생성해 삽입(지연 로드)
-function openModal(site) {
-  modal.setAttribute("aria-hidden", "false");
-  modalTitle.textContent = site.title;
+let currentItem = null;
+function selectSite(site, liElement) {
+  // active 스타일
+  if (currentItem) currentItem.classList.remove("active");
+  if (liElement) liElement.classList.add("active");
+  currentItem = liElement;
 
-  // 절대 URL로 변환
+  // 타이틀/설명 업데이트
+  embedTitle.textContent = site.title || "선택된 미리보기";
+  embedDesc.textContent = site.description || "";
+
   const resolved = resolveUrl(site.url);
   const targetHref = resolved ? resolved.href : site.url;
   openNewTab.href = targetHref;
   embedStatus.textContent = "로딩 중…";
 
-  // 기존 iframe 제거
-  iframeWrap.innerHTML = "";
+  // iframe src 교체
+  embedIframe.src = targetHref;
 
-  // iframe 생성
-  const iframe = document.createElement("iframe");
-  iframe.src = targetHref;
-  iframe.setAttribute("sandbox", "allow-same-origin allow-forms allow-scripts");
-  iframe.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
-  iframe.loading = "eager";
-
-  let loadHandled = false;
-  const loadTimeout = setTimeout(() => {
-    if (!loadHandled) {
-      embedStatus.textContent = "이 페이지는 임베드가 차단되었거나 로딩에 실패했습니다. 아래 버튼으로 새 탭에서 열어보세요.";
-    }
+  // 로드 상태 처리
+  let handled = false;
+  const timeout = setTimeout(() => {
+    if (!handled) embedStatus.textContent = "임베드가 차단되었거나 로딩에 실패했습니다.";
   }, 4000);
 
-  iframe.addEventListener("load", () => {
-    loadHandled = true;
-    clearTimeout(loadTimeout);
-    embedStatus.textContent = "임베드 성공. 안 보인다면 아래 버튼으로 새 탭에서 열어보세요.";
-  });
-
-  iframeWrap.appendChild(iframe);
-  document.addEventListener("keydown", escClose);
+  function onLoad() {
+    handled = true;
+    clearTimeout(timeout);
+    embedStatus.textContent = "임베드 로드 완료.";
+    embedIframe.removeEventListener("load", onLoad);
+  }
+  embedIframe.addEventListener("load", onLoad);
 }
 
-function escClose(e) {
-  if (e.key === "Escape") closeModal();
+// 초기화: 사이드바 렌더링 및 첫 항목 선택
+renderSidebar();
+if (sites.length > 0) {
+  // 첫 항목 선택
+  const firstLi = sidebar.querySelector('.site-item');
+  selectSite(sites[0], firstLi);
 }
 
-function closeModal() {
-  modal.setAttribute("aria-hidden", "true");
-  iframeWrap.innerHTML = "";
-  embedStatus.textContent = "";
-  document.removeEventListener("keydown", escClose);
-}
-
-document.getElementById("modalBackdrop").addEventListener("click", closeModal);
-closeModalBtn.addEventListener("click", closeModal);
-
-renderCards();
-
-window._embedGallery = {
-  sites,
-  render: renderCards,
-  openModal,
-  closeModal
-};
+window._embedGallery = { sites, renderSidebar, selectSite };

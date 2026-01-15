@@ -11,28 +11,29 @@
     <h1>뉴에리두 한국어 모드 미리보기</h1>
     <p class="lead">여기를 클릭하면 각 미리보기가 모달로 열립니다. 임베드가 동작하지 않으면 새 탭으로 여세요.</p>
   </header>
-
   <main>
-    <section id="gallery" class="grid" aria-live="polite">
-      <!-- 카드들이 JS로 삽입됩니다 -->
-    </section>
-  </main>
+    <div class="layout">
+      <aside id="sidebar" class="sidebar" aria-label="사이트 선택">
+        <!-- 사이드바 항목은 JS로 삽입됩니다 -->
+      </aside>
 
-  <!-- 모달: 클릭 시 iframe src 설정 -->
-  <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modal-title">
-    <div class="modal-content" role="document">
-      <button id="closeModal" class="modal-close" aria-label="닫기">✕</button>
-      <h2 id="modal-title" class="modal-title"></h2>
-      <div class="iframe-wrap" id="iframeWrap">
-        <!-- iframe은 클릭 시 동적으로 생성됩니다 -->
-      </div>
-      <div id="modalFooter" class="modal-footer">
-        <a id="openNewTab" class="button" target="_blank" rel="noopener">새 탭</a>
-        <div id="embedStatus" class="embed-status" role="status" aria-live="polite"></div>
-      </div>
+      <section id="embedArea" class="embed-area">
+        <header class="embed-header">
+          <h2 id="embedTitle">선택된 미리보기</h2>
+          <p id="embedDesc" class="lead"></p>
+        </header>
+
+        <div class="iframe-wrap" id="embedWrap">
+          <iframe id="embedIframe" src="about:blank" loading="eager" sandbox="allow-same-origin allow-forms allow-scripts" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+
+        <div class="embed-controls">
+          <a id="openNewTab" class="button" target="_blank" rel="noopener">새 탭에서 열기</a>
+          <div id="embedStatus" class="embed-status" role="status" aria-live="polite"></div>
+        </div>
+      </section>
     </div>
-    <div id="modalBackdrop" class="modal-backdrop"></div>
-  </div>
+  </main>
 
   <script src="assets/scripts.js" type="module"></script>
 </body>
