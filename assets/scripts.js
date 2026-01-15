@@ -7,17 +7,17 @@
 const sites = [
   {
     id: "1",
-    title: "6단지 - 비단잉어 국숫집",
+    title: "6단지",
     url: "pages/1.html",
-    description: "프로젝트 A의 데모 페이지",
+    description: "비단잉어 국숫집",
     thumbnail: "assets/images/1_After.png"
   },
   {
-    id: "sample-2",
-    title: "프로젝트 B",
-    url: "https://anotheruser.github.io/repo/",
-    description: "리서치 결과와 시각화",
-    thumbnail: ""
+    id: "2",
+    title: "6단지",
+    url: "pages/2.html",
+    description: "아우 가판대",
+    thumbnail: "assets/images/2_After.png"
   },
   // 여기에 원하는 만큼 항목 추가
 ];
@@ -93,12 +93,12 @@ function renderCards() {
 
     const openBtn = document.createElement("button");
     openBtn.className = "button";
-    openBtn.textContent = "미리보기";
+    openBtn.textContent = "열기";
     openBtn.addEventListener("click", () => openModal(site));
 
     const newTab = document.createElement("a");
     newTab.className = "button secondary";
-    newTab.textContent = "새 탭으로 열기";
+    newTab.textContent = "새 탭";
     // href에 절대 URL을 넣어 안전하게 새탭에서 열리게 함
     const resolvedForLink = resolveUrl(site.url);
     newTab.href = resolvedForLink ? resolvedForLink.href : site.url;
@@ -150,7 +150,7 @@ function openModal(site) {
   iframe.addEventListener("load", () => {
     loadHandled = true;
     clearTimeout(loadTimeout);
-    embedStatus.textContent = "임베드 성공 — 아래에서 상호작용�� 수 있습니다.";
+    embedStatus.textContent = "임베드 성공. 안 보인다면 아래 버튼으로 새 탭에서 열어보세요.";
   });
 
   iframeWrap.appendChild(iframe);
