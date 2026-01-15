@@ -6,11 +6,11 @@
 
 const sites = [
   {
-    id: "sample-1",
-    title: "프로젝트 A",
+    id: "1",
+    title: "6단지 - 비단잉어 국숫집",
     url: "pages/1.html",
     description: "프로젝트 A의 데모 페이지",
-    thumbnail: "assets/images/1_After.png" // 예: "assets/thumbs/project-a.png"
+    thumbnail: "assets/images/1_After.png"
   },
   {
     id: "sample-2",
@@ -32,6 +32,16 @@ const modalTitle = document.getElementById("modal-title");
 const openNewTab = document.getElementById("openNewTab");
 const embedStatus = document.getElementById("embedStatus");
 
+// 유틸: 상대/절대 URL을 현재 문서(location.href)를 기준으로 절대 URL로 변환
+function resolveUrl(maybeRelative) {
+  try {
+    // new URL(value, base) 사용하면 상대경로도 처리 가능
+    return new URL(maybeRelative, location.href);
+  } catch (e) {
+    return null;
+  }
+}
+
 // 카드 렌더링
 function renderCards() {
   gallery.innerHTML = "";
@@ -42,20 +52,31 @@ function renderCards() {
 
     const thumb = document.createElement("div");
     thumb.className = "card-thumb";
+
+    // thumbnail이 있으면 절대 URL로 변환해서 사용
     if (site.thumbnail) {
+      const resolvedThumb = resolveUrl(site.thumbnail);
       const img = document.createElement("img");
-      img.src = site.thumbnail;
+      img.src = resolvedThumb ? resolvedThumb.href : site.thumbnail;
       img.alt = site.title + " 썸네일";
       img.style.width = "100%";
       img.style.height = "100%";
       img.style.objectFit = "cover";
       thumb.appendChild(img);
     } else {
-      // 기본 자리표시 (도메인/타이틀)
-      const host = (new URL(site.url)).host;
+      // 기본 자리표시: 사이트의 "도메인 + 경로"를 보여줌
+      const resolved = resolveUrl(site.url);
+      let displayLine = "";
+      if (resolved) {
+        // 예: username.github.io/repo/pages/1.html -> host + pathname
+        displayLine = `${resolved.host}${resolved.pathname}`;
+      } else {
+        // 파싱 실패 시 원본 문자열 표시
+        displayLine = site.url;
+      }
       thumb.innerHTML = `<div style="text-align:center;padding:12px">
         <strong style="display:block;margin-bottom:6px">${site.title}</strong>
-        <span style="color:rgba(255,255,255,0.6);font-size:0.9rem">${host}</span>
+        <span style="color:rgba(255,255,255,0.6);font-size:0.9rem">${displayLine}</span>
       </div>`;
     }
 
@@ -78,7 +99,9 @@ function renderCards() {
     const newTab = document.createElement("a");
     newTab.className = "button secondary";
     newTab.textContent = "새 탭으로 열기";
-    newTab.href = site.url;
+    // href에 절대 URL을 넣어 안전하게 새탭에서 열리게 함
+    const resolvedForLink = resolveUrl(site.url);
+    newTab.href = resolvedForLink ? resolvedForLink.href : site.url;
     newTab.target = "_blank";
     newTab.rel = "noopener";
 
@@ -100,7 +123,11 @@ function renderCards() {
 function openModal(site) {
   modal.setAttribute("aria-hidden", "false");
   modalTitle.textContent = site.title;
-  openNewTab.href = site.url;
+
+  // 절대 URL로 변환
+  const resolved = resolveUrl(site.url);
+  const targetHref = resolved ? resolved.href : site.url;
+  openNewTab.href = targetHref;
   embedStatus.textContent = "로딩 중…";
 
   // 기존 iframe 제거
@@ -108,58 +135,44 @@ function openModal(site) {
 
   // iframe 생성
   const iframe = document.createElement("iframe");
-  iframe.src = site.url;
-  // sandbox: 필요 최소 권한만 허용 (보안)
-  // allow-scripts 필요 시 추가하지만, 외부 스크립트가 브라우저에서 동작하므로 주의
+  iframe.src = targetHref;
   iframe.setAttribute("sandbox", "allow-same-origin allow-forms allow-scripts");
   iframe.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
-  iframe.loading = "eager"; // 이미 모달을 연 시점이라 사용자가 볼 가능성이 높음
+  iframe.loading = "eager";
 
-  // 타임아웃: 몇 초 내에 정상적으로 임베드가 되지 않으면 fallback 안내 표시
   let loadHandled = false;
   const loadTimeout = setTimeout(() => {
     if (!loadHandled) {
       embedStatus.textContent = "이 페이지는 임베드가 차단되었거나 로딩에 실패했습니다. 아래 버튼으로 새 탭에서 열어보세요.";
     }
-  }, 4000); // 4초
+  }, 4000);
 
-  // onload 이벤트 (주의: 브라우저/정책에 따라 항상 정확하지 않을 수 있음)
   iframe.addEventListener("load", () => {
     loadHandled = true;
     clearTimeout(loadTimeout);
-    embedStatus.textContent = "임베드 성공 — 아래에서 상호작용할 수 있습니다.";
-    // 만약 내용이 비어있거나 차단되면(일부 브라우저) 사용자가 빈 화면을 볼 수 있음 => 새 탭 링크 제공
+    embedStatus.textContent = "임베드 성공 — 아래에서 상호작용�� 수 있습니다.";
   });
 
-  // 일부 브라우저에서 iframe 오류를 잡기 어렵기 때문에 (CORS 등),
-  // 사용자에게 항상 '새 탭으로 열기' 옵션을 명확히 보여줍니다.
   iframeWrap.appendChild(iframe);
-
-  // ESC로 닫기
   document.addEventListener("keydown", escClose);
 }
 
-// ESC 키 닫기 핸들러
 function escClose(e) {
   if (e.key === "Escape") closeModal();
 }
 
 function closeModal() {
   modal.setAttribute("aria-hidden", "true");
-  // iframe 제거로 메모리 해제
   iframeWrap.innerHTML = "";
   embedStatus.textContent = "";
   document.removeEventListener("keydown", escClose);
 }
 
-// 모달 닫기 바깥 클릭 허용
 document.getElementById("modalBackdrop").addEventListener("click", closeModal);
 closeModalBtn.addEventListener("click", closeModal);
 
-// 초기 렌더
 renderCards();
 
-// Exports for dev console (선택)
 window._embedGallery = {
   sites,
   render: renderCards,
