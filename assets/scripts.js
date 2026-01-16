@@ -47,9 +47,11 @@ async function start() {
       li.className = "site-item";
       li.setAttribute("data-id", site.id);
 
-      // 배경에 썸네일 적용
+      // 배경에 썸네일 적용 (site.thumbnail을 우선 사용, 없으면 assets/images/<id>_After.png로 폴백)
       if (site.thumbnail) {
-        li.style.background = `linear-gradient(180deg, rgba(11,18,32,0.55), rgba(3,8,15,0.25)), url('https://dpn-dpn.github.io/ZZZ_KOR_embed_page/assets/images/' + ${site.id} + '_After.html')})`;
+        const resolvedThumb = resolveUrl(site.thumbnail);
+        const thumbUrl = resolvedThumb ? resolvedThumb.href : `assets/images/${site.id}_After.png`;
+        li.style.backgroundImage = `linear-gradient(180deg, rgba(11,18,32,0.55), rgba(3,8,15,0.25)), url('${thumbUrl}')`;
         li.style.backgroundSize = 'cover';
         li.style.backgroundPosition = 'center';
         li.style.backgroundRepeat = 'no-repeat';
