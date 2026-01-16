@@ -2,71 +2,51 @@
   {
     "id": "1",
     "title": "6단지",
-    "url": "pages/1.html",
-    "description": "비단잉어 국숫집",
-    "thumbnail": "assets/images/1_After.png"
+    "description": "비단잉어 국숫집"
   },
   {
     "id": "2",
     "title": "6단지",
-    "url": "pages/2.html",
-    "description": "아우 가판대",
-    "thumbnail": "assets/images/2_After.png"
+    "description": "아우 가판대"
   },
   {
     "id": "3",
     "title": "6단지",
-    "url": "pages/3.html",
-    "description": "지하철",
-    "thumbnail": "assets/images/3_After.png"
+    "description": "지하철"
   },
   {
     "id": "4",
     "title": "비디오 가게",
-    "url": "pages/4.html",
-    "description": "1층 로비",
-    "thumbnail": "assets/images/4_After.png"
+    "description": "1층 로비"
   },
   {
     "id": "5",
     "title": "스코트 전초기지",
-    "url": "pages/5.html",
-    "description": "전초기지",
-    "thumbnail": "assets/images/5_After.png"
+    "description": "전초기지"
   },
   {
     "id": "6",
     "title": "흑기러기길 건설부지",
-    "url": "pages/6.html",
-    "description": "배경",
-    "thumbnail": "assets/images/6_After.png"
+    "description": "배경"
   },
   {
     "id": "7",
     "title": "6단지역",
-    "url": "pages/7.html",
-    "description": "6단지역",
-    "thumbnail": "assets/images/7_After.png"
+    "description": "6단지역"
   },
   {
     "id": "8",
     "title": "아이템",
-    "url": "pages/8.html",
-    "description": "정보",
-    "thumbnail": "assets/images/8_After.png"
+    "description": "정보"
   },
   {
     "id": "9",
     "title": "캐릭터",
-    "url": "pages/9.html",
-    "description": "에이전트",
-    "thumbnail": "assets/images/9_After.png"
+    "description": "에이전트"
   },
   {
     "id": "10",
     "title": "엘피스 항구",
-    "url": "pages/10.html",
-    "description": "항구",
-    "thumbnail": "assets/images/10_After.png"
+    "description": "항구"
   }
 ]
