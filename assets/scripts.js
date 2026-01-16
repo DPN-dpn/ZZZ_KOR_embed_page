@@ -47,13 +47,11 @@ async function start() {
       li.className = "site-item";
       li.setAttribute("data-id", site.id);
 
-      if (site.thumbnail) {
-        li.style.backgroundImage = `linear-gradient(180deg, rgba(11,18,32,0.55), rgba(3,8,15,0.25)), url('assets/images/${site.id}_After.png')`;
-        li.style.backgroundSize = 'cover';
-        li.style.backgroundPosition = 'center';
-        li.style.backgroundRepeat = 'no-repeat';
-        li.style.color = 'white';
-      }
+      li.style.backgroundImage = `linear-gradient(180deg, rgba(11,18,32,0.55), rgba(3,8,15,0.25)), url('assets/images/${site.id}_After.png')`;
+      li.style.backgroundSize = 'cover';
+      li.style.backgroundPosition = 'center';
+      li.style.backgroundRepeat = 'no-repeat';
+      li.style.color = 'white';
 
       // 카드 전체를 버튼으로 만들어 클릭 영역을 카드 전체로 확장
       const btn = document.createElement("button");
