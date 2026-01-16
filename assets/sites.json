@@ -68,5 +68,12 @@
     "url": "pages/10.html",
     "description": "항구",
     "thumbnail": "assets/images/10_After.png"
+  },
+  {
+    "id": "11",
+    "title": "Test",
+    "url": "pages/11.html",
+    "description": "Test",
+    "thumbnail": "assets/images/11_After.png"
   }
 ]
