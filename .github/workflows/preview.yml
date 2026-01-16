@@ -1,0 +1,32 @@
+name: Deploy Preview Site
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set preview directory
+        run: echo "PREVIEW_DIR=previews/${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Deploy preview to deployment branch
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: deployment
+          folder: .
+          clean: false
+          destination_dir: ${{ env.PREVIEW_DIR }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Post preview URL as PR comment
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          message: |
+            Preview URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.PREVIEW_DIR }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
