@@ -49,7 +49,7 @@ async function start() {
 
       // 배경에 썸네일 적용
       if (site.thumbnail) {
-        li.style.background = `linear-gradient(180deg, rgba(11,18,32,0.55), rgba(3,8,15,0.25)), url('assets/images/${site.id}_After.png')`;
+        li.style.background = `linear-gradient(180deg, rgba(11,18,32,0.55), rgba(3,8,15,0.25)), url(${resolveUrl('assets/images/' + site.id + '_After.html')})`;
         li.style.backgroundSize = 'cover';
         li.style.backgroundPosition = 'center';
         li.style.backgroundRepeat = 'no-repeat';
