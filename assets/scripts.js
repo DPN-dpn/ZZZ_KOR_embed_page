@@ -49,7 +49,7 @@ async function start() {
 
       // 배경에 썸네일 적용
       if (site.thumbnail) {
-        li.style.background = `linear-gradient(180deg, rgba(11,18,32,0.55), rgba(3,8,15,0.25)), url('${site.thumbnail}')`;
+        li.style.background = `linear-gradient(180deg, rgba(11,18,32,0.55), rgba(3,8,15,0.25)), url('assets/images/${site.id}_After.png')`;
         li.style.backgroundSize = 'cover';
         li.style.backgroundPosition = 'center';
         li.style.backgroundRepeat = 'no-repeat';
@@ -70,7 +70,7 @@ async function start() {
       btn.style.border = '0';
 
       const titleEl = document.createElement('div');
-      titleEl.textContent = site.title || site.url;
+      titleEl.textContent = site.title || `pages/${site.id}.html`;
       titleEl.className = 'site-title';
       titleEl.style.fontWeight = '600';
 
@@ -98,8 +98,8 @@ async function start() {
     embedTitle.textContent = site.title || "선택된 미리보기";
     embedDesc.textContent = site.description || "";
 
-    const resolved = resolveUrl(site.url);
-    const targetHref = resolved ? resolved.href : site.url;
+    const resolved = resolveUrl(`pages/${site.id}.html`);
+    const targetHref = resolved ? resolved.href : `pages/${site.id}.html`;
     openNewTab.href = targetHref;
     embedStatus.textContent = "로딩 중…";
 
