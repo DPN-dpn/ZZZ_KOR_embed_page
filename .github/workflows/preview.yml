@@ -5,11 +5,17 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+permissions:
+  contents: write
+  pages: write
+
 jobs:
   deploy-preview:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set preview directory
         run: echo "PREVIEW_DIR=previews/${GITHUB_SHA::7}" >> $GITHUB_ENV
